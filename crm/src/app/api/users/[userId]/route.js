@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 
-export const GET = async () => {
+export const GET = async (req, { params }) => {
+  const { userId } = await params;
+
   try {
-    const users = await prisma.user.findMany({
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
       select: {
         id: true,
         firstName: true,
@@ -39,11 +42,18 @@ export const GET = async () => {
       },
     });
 
-    return NextResponse.json({ data: users }, { status: 200 });
+    if (!user) {
+      return NextResponse.json(
+        { message: "User not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ data: user }, { status: 200 });
   } catch (error) {
-    console.log("error", error);
+    console.error("Error fetching user:", error);
     return NextResponse.json(
-      { message: "Failed to fetch users", error },
+      { message: "Failed to fetch user", error },
       { status: 500 }
     );
   }
