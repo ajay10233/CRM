@@ -1,9 +1,9 @@
-
-"use client"
+"use client";
 import React, { useEffect, useState } from "react";
+import { use } from "react"; // <- import `use` from React
 
 interface Params {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 interface User {
@@ -11,20 +11,37 @@ interface User {
   firstName: string;
   lastName: string | null;
   email: string;
+  username: string;
   phone: string;
-  password: string;
   role: string;
-  createdAt: string;
-  updatedAt: string;
-  profilePhoto?: string;
   age?: string;
   gender?: string;
-  address?: string;
-  // add any other fields you want to display
+  houseNumber?: string;
+  street?: string;
+  buildingName?: string;
+  landmark?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  zipCode?: string;
+  mobileNumber?: string;
+  profilePhoto?: string;
+  firmName?: string;
+  shopAddress?: string;
+  contactEmail?: string;
+  paymentDetails?: string;
+  description?: string;
+  hashtags?: string;
+  photos?: string[];
+  shopOpenTime?: string;
+  shopCloseTime?: string;
+  shopOpenDays?: string[];
+  latitude?: number;
+  longitude?: number;
 }
 
 export default function UserDetailPage({ params }: Params) {
-  const { id } = params;
+  const { id } = use(params); // <- unwrap the promise here safely
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -33,7 +50,7 @@ export default function UserDetailPage({ params }: Params) {
       try {
         const res = await fetch(`/api/users/${id}`);
         const data = await res.json();
-        setUser(data.data); // adjust if your API wraps user inside `data`
+        setUser(data.data);
       } catch (err) {
         console.error("Error fetching user:", err);
       } finally {
@@ -44,7 +61,14 @@ export default function UserDetailPage({ params }: Params) {
     fetchUser();
   }, [id]);
 
-  if (loading) return <div className="p-6 text-white">Loading user details...</div>;
+  const display = (value: any) => {
+    if (Array.isArray(value))
+      return value.length ? value.join(", ") : "Not uploaded by the user";
+    return value ?? "Not uploaded by the user";
+  };
+
+  if (loading)
+    return <div className="p-6 text-white">Loading user details...</div>;
   if (!user) return <div className="p-6 text-red-400">User not found</div>;
 
   return (
@@ -52,20 +76,69 @@ export default function UserDetailPage({ params }: Params) {
       <h1 className="text-3xl font-bold mb-6">User Details</h1>
       <div className="bg-[#2F3E4C] rounded-xl p-6 space-y-4">
         <img
-          src={user.profilePhoto || "https://via.placeholder.com/150"}
+          src={user.profilePhoto || "https://media.istockphoto.com/id/619400810/photo/mr-who.webp?a=1&b=1&s=612x612&w=0&k=20&c=6cz9uumveIOesURahritB_WaN5aIkKy1lAOp_1VfBX8="}
           alt="Profile"
           className="w-32 h-32 object-cover rounded-full border border-gray-500"
         />
-        <p><strong>ID:</strong> {user.id}</p>
-        <p><strong>Name:</strong> {user.firstName} {user.lastName ?? ""}</p>
-        <p><strong>Email:</strong> {user.email}</p>
-        <p><strong>Phone:</strong> {user.phone}</p>
-        <p><strong>Password:</strong> {user.password}</p>
-        <p><strong>Role:</strong> {user.role}</p>
-        <p><strong>Age:</strong> {user.age ?? "N/A"}</p>
-        <p><strong>Gender:</strong> {user.gender ?? "N/A"}</p>
-        <p><strong>Created At:</strong> {new Date(user.createdAt).toLocaleString()}</p>
-        <p><strong>Updated At:</strong> {new Date(user.updatedAt).toLocaleString()}</p>
+        <p>
+          <strong>Username:</strong> {display(user.username)}
+        </p>
+        <p>
+          <strong>Firm Name:</strong> {display(user.firmName)}
+        </p>
+        <p>
+          <strong>Shop Address:</strong> {display(user.shopAddress)}
+        </p>
+        <p>
+          <strong>Contact Email:</strong> {display(user.email)}
+        </p>
+        <p>
+          <strong>Payment Details:</strong> {display(user.paymentDetails)}
+        </p>
+        <p>
+          <strong>Description:</strong> {display(user.description)}
+        </p>
+        <p>
+          <strong>Hashtags:</strong> {display(user.hashtags)}
+        </p>
+        <p>
+          <strong>Photos:</strong> {display(user.photos)}
+        </p>
+        <p>
+          <strong>Shop Open Time:</strong> {display(user.shopOpenTime)}
+        </p>
+        <p>
+          <strong>Shop Close Time:</strong> {display(user.shopCloseTime)}
+        </p>
+        <p>
+          <strong>Shop Open Days:</strong> {display(user.shopOpenDays)}
+        </p>
+        <p>
+          <strong>Address:</strong>{" "}
+          {display(
+            [
+              user.houseNumber,
+              user.buildingName,
+              user.street,
+              user.landmark,
+              user.city,
+              user.state,
+              user.country,
+              user.zipCode,
+            ]
+              .filter(Boolean)
+              .join(", ")
+          )}
+        </p>
+        <p>
+          <strong>Mobile Number:</strong> {display(user.phone)}
+        </p>
+        <p>
+          <strong>Latitude:</strong> {display(user.latitude)}
+        </p>
+        <p>
+          <strong>Longitude:</strong> {display(user.longitude)}
+        </p>
       </div>
     </div>
   );
