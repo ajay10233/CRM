@@ -22,35 +22,35 @@ export async function PUT(req, { params }) {
 
         const updateData = {};
 
-        if (name !== undefined) {
+        if (name) {
             if (typeof name !== "string") {
                 return NextResponse.json({ error: "Name must be a string." }, { status: 400 });
             }
             updateData.name = name;
         }
 
-        if (price !== undefined) {
+        if (price) {
             if (typeof price !== "number" || price < 0) {
                 return NextResponse.json({ error: "Price must be a valid non-negative number." }, { status: 400 });
             }
             updateData.price = price;
         }
 
-        if (description !== undefined) {
+        if (description) {
             if (typeof description !== "string") {
                 return NextResponse.json({ error: "Description must be a string." }, { status: 400 });
             }
             updateData.description = description;
         }
 
-        if (features !== undefined) {
+        if (features) {
             if (!Array.isArray(features) || !features.every(f => typeof f === "string")) {
                 return NextResponse.json({ error: "Features must be an array of strings." }, { status: 400 });
             }
             updateData.features = features;
         }
 
-        if (durationInDays !== undefined) {
+        if (durationInDays) {
             if (
                 durationInDays !== null &&
                 (typeof durationInDays !== "number" || durationInDays < 1)
