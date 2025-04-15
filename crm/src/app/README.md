@@ -136,3 +136,45 @@ Updates fields of an existing subscription plan.
 - Invalid field types.
 - Plan not found.
 - Internal Server Error.
+
+---
+
+### 🔵 `GET /api/plans/get-all-users`
+
+#### 📌 Description:
+Fetches all users who have an active subscription plan, including their personal and plan details.
+
+#### ✅ Method:
+`GET`
+
+#### 📤 Response:
+```json
+[
+  {
+    "id": "usr123...",
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john@example.com",
+    "phone": "9876543210",
+    "role": "USER",
+    "planActivatedAt": "2025-04-01T00:00:00.000Z",
+    "planExpiresAt": "2025-05-01T00:00:00.000Z",
+    "subscriptionPlan": {
+      "id": "pln123...",
+      "name": "Premium Plan",
+      "price": 299,
+      "features": ["Priority Support", "Unlimited Reviews"],
+      "durationInDays": 30,
+      "description": "Best for large institutions"
+    }
+  },
+  ...
+]
+```
+
+#### ❌ Errors:
+```json
+{
+  "error": "Internal Server Error"
+}
+```
