@@ -10,7 +10,7 @@ export async function GET(req, { params }) {
 
     if (!plan) return NextResponse.json({ error: "Plan not found" }, { status: 404 });
 
-    return NextResponse.json(plan);
+    return NextResponse.json(plan, { status: 200 });
 }
 
 
@@ -73,10 +73,9 @@ export async function PUT(req, { params }) {
             data: updateData,
         });
 
-        return NextResponse.json(updatedPlan);
+        return NextResponse.json(updatedPlan, { status: 200 });
     } catch (error) {
         console.error("Plan update error:", error);
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }
-
