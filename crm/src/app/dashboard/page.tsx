@@ -5,6 +5,7 @@ import UserList from "../components/UserList";
 import Sidebar from "../components/SideBar";
 import PlansPage from "../plans/page";
 import Graph from "../components/graph";
+import GenerateCouponForm from "../components/GenerateCouponForm";
 
 const Page = () => {
   const [activeTab, setActiveTab] = useState("home");
@@ -16,7 +17,7 @@ const Page = () => {
       case "analytics":
         return <PlansPage />;
       case "calendar":
-        return <div className="text-white">Calendar section coming soon...</div>;
+        return <GenerateCouponForm/>;
       case "users":
         return <div className="text-white">Users section coming soon...</div>;
       case "monitoring":
