@@ -1,3 +1,139 @@
+## 📄 API: `/api/coupons`
+
+---
+
+### 🟢 `GET /api/coupons`
+
+#### 📌 Description:
+Fetches all available coupons.
+
+#### ✅ Method:
+`GET`
+
+#### 📤 Response:
+```json
+[
+  {
+    "id": "clx123...",
+    "name": "GOLD PLAN",
+    "discountPercentage": 50,
+    "startDate": "2025-04-20T00:00:00.000Z",
+    "durationInDays": 10,
+    "expiresAt": "2025-04-30T00:00:00.000Z",
+    "createdAt": "2025-04-16T10:00:00.000Z",
+    "updatedAt": "2025-04-16T10:00:00.000Z"
+  },
+  ...
+]
+```
+
+---
+
+### 🟢 `POST /api/coupons`
+
+#### 📌 Description:
+Creates a new coupon with the provided details. If `startDate` is not provided, a random date within the next 30 days is used.
+
+#### ✅ Method:
+`POST`
+
+#### 📥 Body:
+```json
+{
+  "name": "GOLD PLAN",
+  "discountPercentage": 50,
+  "startDate": "2025-04-20T00:00:00.000Z",  // Optional
+  "durationInDays": 10
+}
+```
+
+#### 📤 Response:
+```json
+{
+  "id": "clx123...",
+  "name": "GOLD PLAN",
+  "discountPercentage": 50,
+  "startDate": "2025-04-20T00:00:00.000Z",
+  "durationInDays": 10,
+  "expiresAt": "2025-04-30T00:00:00.000Z",
+  "createdAt": "2025-04-16T10:00:00.000Z",
+  "updatedAt": "2025-04-16T10:00:00.000Z"
+}
+```
+
+---
+
+## 📄 API: `/api/coupons/[id]/edit`
+
+---
+
+### 🟡 `PUT /api/coupons/:id/edit`
+
+#### 📌 Description:
+Updates a coupon with new values. `expiresAt` is **not recalculated** automatically (you can update it manually or add logic to recalculate it).
+
+#### ✅ Method:
+`PUT`
+
+#### 🧩 URL Params:
+- `id`: The ID of the coupon to update.
+
+#### 📥 Body:
+```json
+{
+  "name": "PLATINUM PLAN",
+  "discountPercentage": 60,
+  "startDate": "2025-04-22T00:00:00.000Z",
+  "durationInDays": 15
+}
+```
+
+#### 📤 Response:
+```json
+{
+  "id": "clx123...",
+  "name": "PLATINUM PLAN",
+  "discountPercentage": 60,
+  "startDate": "2025-04-22T00:00:00.000Z",
+  "durationInDays": 15,
+  "expiresAt": "2025-04-30T00:00:00.000Z",
+  "createdAt": "2025-04-16T10:00:00.000Z",
+  "updatedAt": "2025-04-16T10:10:00.000Z"
+}
+```
+
+---
+
+## 📄 API: `/api/coupons/[id]/delete`
+
+---
+
+### 🔴 `DELETE /api/coupons/:id/delete`
+
+#### 📌 Description:
+Deletes a specific coupon by ID.
+
+#### ✅ Method:
+`DELETE`
+
+#### 🧩 URL Params:
+- `id`: The ID of the coupon to delete.
+
+#### 📤 Response:
+```json
+{
+  "id": "clx123...",
+  "name": "GOLD PLAN",
+  "discountPercentage": 50,
+  "startDate": "2025-04-20T00:00:00.000Z",
+  "durationInDays": 10,
+  "expiresAt": "2025-04-30T00:00:00.000Z",
+  "createdAt": "2025-04-16T10:00:00.000Z",
+  "updatedAt": "2025-04-16T10:00:00.000Z"
+}
+```
+
+
 ## 📄 API: `/api/plans`
 
 ---
