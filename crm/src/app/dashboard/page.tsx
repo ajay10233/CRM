@@ -1,7 +1,10 @@
 "use client";
+
 import React, { useState } from "react";
 import UserList from "../components/UserList";
 import Sidebar from "../components/SideBar";
+import PlansPage from "../plans/page";
+import Graph from "../components/graph";
 
 const Page = () => {
   const [activeTab, setActiveTab] = useState("home");
@@ -11,13 +14,13 @@ const Page = () => {
       case "home":
         return <UserList />;
       case "analytics":
-        return <div className="text-white">Analytics section coming soon...</div>;
+        return <PlansPage />;
       case "calendar":
         return <div className="text-white">Calendar section coming soon...</div>;
       case "users":
         return <div className="text-white">Users section coming soon...</div>;
       case "monitoring":
-        return <div className="text-white">Monitoring section coming soon...</div>;
+        return <div className="text-white"><Graph/></div>;
       default:
         return null;
     }
