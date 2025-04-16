@@ -153,11 +153,22 @@ export default function GenerateCouponManager() {
               className="w-full p-2 rounded-xl border border-secondary bg-[#394652] text-text focus:ring-2 focus:ring-accent outline-none"
               type="number"
               value={discountPercentage}
-              onChange={(e) => setDiscountPercentage(+e.target.value)}
+              onChange={(e) => {
+                const value = +e.target.value;
+                if (value > 100) {
+                  setDiscountPercentage(100);
+                } else if (value < 1) {
+                  setDiscountPercentage(1);
+                } else {
+                  setDiscountPercentage(value);
+                }
+              }}
               placeholder="Ex: 50"
               min={1}
+              max={100}
             />
           </div>
+
           <div>
             <label className="block text-text mb-1">Start Date</label>
             <DatePicker
@@ -221,9 +232,7 @@ export default function GenerateCouponManager() {
             {coupons.map((c) => {
               const start = new Date(c.startDate);
               const end = new Date(c.expiresAt);
-              const durationDays = Math.ceil(
-                (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
-              );
+              const durationDays = c.durationInDays;
 
               return (
                 <li
