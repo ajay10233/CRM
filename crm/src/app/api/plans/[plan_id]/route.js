@@ -10,7 +10,7 @@ export async function GET(req, { params }) {
 
     if (!plan) return NextResponse.json({ error: "Plan not found" }, { status: 404 });
 
-    return NextResponse.json(plan);
+    return NextResponse.json(plan, { status: 200 });
 }
 
 
@@ -22,35 +22,35 @@ export async function PUT(req, { params }) {
 
         const updateData = {};
 
-        if (name !== undefined) {
+        if (name) {
             if (typeof name !== "string") {
                 return NextResponse.json({ error: "Name must be a string." }, { status: 400 });
             }
             updateData.name = name;
         }
 
-        if (price !== undefined) {
+        if (price) {
             if (typeof price !== "number" || price < 0) {
                 return NextResponse.json({ error: "Price must be a valid non-negative number." }, { status: 400 });
             }
             updateData.price = price;
         }
 
-        if (description !== undefined) {
+        if (description) {
             if (typeof description !== "string") {
                 return NextResponse.json({ error: "Description must be a string." }, { status: 400 });
             }
             updateData.description = description;
         }
 
-        if (features !== undefined) {
+        if (features) {
             if (!Array.isArray(features) || !features.every(f => typeof f === "string")) {
                 return NextResponse.json({ error: "Features must be an array of strings." }, { status: 400 });
             }
             updateData.features = features;
         }
 
-        if (durationInDays !== undefined) {
+        if (durationInDays) {
             if (
                 durationInDays !== null &&
                 (typeof durationInDays !== "number" || durationInDays < 1)
@@ -73,10 +73,9 @@ export async function PUT(req, { params }) {
             data: updateData,
         });
 
-        return NextResponse.json(updatedPlan);
+        return NextResponse.json(updatedPlan, { status: 200 });
     } catch (error) {
         console.error("Plan update error:", error);
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }
-
