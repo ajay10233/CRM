@@ -8,12 +8,17 @@ export async function GET() {
 
 
 export async function POST(req) {
-    const { name, discountPercentage, startDate, durationInDays } = await req.json();
+    const { name, discountPercentage, startDate,purpose, durationInDays } = await req.json();
     
-    if (!name || discountPercentage == null || durationInDays == null) {
+    if (!name || discountPercentage == null || durationInDays == null || purpose == null) {
       return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
     }
-  
+
+    if(durationInDays <= 0) return NextResponse.json({ error: 'durationInDays must be a positive number' }, { status: 400 });
+
+    if(discountPercentage <= 0 && discountPercentage > 100) return NextResponse.json({ error: 'discountPercentage must be a positive number between 0 and 100' }, { status: 400 });
+    
+    
     const parsedStartDate = startDate
       ? new Date(startDate)
       : new Date(Date.now() + Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000);
@@ -31,6 +36,7 @@ export async function POST(req) {
         startDate: parsedStartDate,
         durationInDays: parsedDuration,
         expiresAt,
+        purpose,
       },
     });
   

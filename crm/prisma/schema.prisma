@@ -352,4 +352,13 @@ model Coupon {
   expiresAt             DateTime
   createdAt             DateTime? @default(now())
   updatedAt             DateTime? @updatedAt
+  purpose               Purpose?
+
+  @@map("coupons")
 }
+
+enum Purpose {
+  PLAN
+  PROMOTION
+}
+
