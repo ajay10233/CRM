@@ -41,7 +41,7 @@ model User {
   username          String? @unique
   phone             String  @unique
   password          String
-  role              String   @default("USER") // USER or INSTITUTION
+  role              String   @default("USER")
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
@@ -74,6 +74,7 @@ model User {
   upi_id           String?
   latitude         Float?  
   longitude        Float?  
+  scanner_image    String?
 
   // Relationships
   sentMessages     Message[] @relation("UserSentMessages")
@@ -103,11 +104,11 @@ model User {
   subscriptionPlanId   String?  @db.ObjectId
   planActivatedAt      DateTime?
   planExpiresAt        DateTime?
+  paidProfilesGiven    PaidProfile[] @relation("PaidProfilePayer")
+  abusiveCommentsReported AbusiveComment[] @relation("UserReportedAbuse")
 
   @@map("users")
 }
-
-
 
 //! Need to add cron jobs to automatically downgrade the plans
 // const expiredUsers = await prisma.user.findMany({
@@ -116,7 +117,7 @@ model User {
 //       lt: new Date(),
 //     },
 //     subscriptionPlan: {
-//       not: 'FREE',
+//       not: 'BASIC',
 //     },
 //   },
 // });
@@ -125,7 +126,7 @@ model User {
 //   await prisma.user.update({
 //     where: { id: user.id },
 //     data: {
-//       subscriptionPlan: 'FREE',
+//       subscriptionPlan: 'BASIC',
 //       planActivatedAt: null,
 //       planExpiresAt: null,
 //     },
@@ -337,7 +338,7 @@ model Review {
 
   user           User     @relation("UserReviewGiven", fields: [userId], references: [id])
   institution    User     @relation("UserReviewReceived", fields: [institutionId], references: [id])
-
+  abuseReports AbusiveComment[] @relation("ReviewAbuseReports")
   // @@unique([userId, institutionId]) // Optional: prevent duplicate reviews per user
   @@map("reviews")
 }
@@ -353,7 +354,7 @@ model Coupon {
   createdAt             DateTime? @default(now())
   updatedAt             DateTime? @updatedAt
   purpose               Purpose?
-
+  limit                 Int?
   @@map("coupons")
 }
 
@@ -362,3 +363,32 @@ enum Purpose {
   PROMOTION
 }
 
+
+model PaidProfile {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String   @db.ObjectId
+  amountPaid      Float
+  createdAt       DateTime @default(now())
+  expiresAt       DateTime?
+  notes           String?
+  user            User     @relation("PaidProfilePayer", fields: [userId], references: [id])
+  image           String?
+
+
+  @@map("paid_profiles")
+}
+
+
+model AbusiveComment {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  reviewId   String   @db.ObjectId
+  reason     String
+  reportedBy String   @db.ObjectId
+  // status     String   @default("PENDING") // PENDING | ACCEPTED | DENIED
+  createdAt  DateTime @default(now())
+
+  review Review @relation("ReviewAbuseReports", fields: [reviewId], references: [id], onDelete: Cascade)
+  reporter   User     @relation("UserReportedAbuse", fields: [reportedBy], references: [id],onDelete: Cascade)
+
+  @@map("abusive_comments")
+}

@@ -8,7 +8,7 @@ export async function GET() {
 
 
 export async function POST(req) {
-    const { name, discountPercentage, startDate,purpose, durationInDays } = await req.json();
+    const { name, discountPercentage, startDate,purpose, durationInDays,limit } = await req.json();
     
     if (!name || discountPercentage == null || durationInDays == null || purpose == null) {
       return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
@@ -25,7 +25,7 @@ export async function POST(req) {
   
     const parsedDiscount = parseFloat(discountPercentage);
     const parsedDuration = parseInt(durationInDays);
-  
+    const limit_num = limit?parseInt(limit):-1;
     const expiresAt = new Date(parsedStartDate);
     expiresAt.setDate(expiresAt.getDate() + parsedDuration);
   
@@ -37,6 +37,7 @@ export async function POST(req) {
         durationInDays: parsedDuration,
         expiresAt,
         purpose,
+        limit:limit_num,
       },
     });
   
