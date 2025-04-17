@@ -20,7 +20,7 @@ export async function PUT(req, { params }) {
         const data = await req.json();
         const { name, price, description, features, durationInDays, image } = data;
 
-        const updateData = {};
+        const updateData = {};  
 
         if (name) {
             if (typeof name !== "string") {
@@ -29,11 +29,11 @@ export async function PUT(req, { params }) {
             updateData.name = name;
         }
 
-        if (price) {
+        if (price !== undefined) { 
             if (typeof price !== "number" || price < 0) {
                 return NextResponse.json({ error: "Price must be a valid non-negative number." }, { status: 400 });
             }
-            updateData.price = price;
+            updateData.price = price; 
         }
 
         if (description) {
@@ -50,7 +50,7 @@ export async function PUT(req, { params }) {
             updateData.features = features;
         }
 
-        if (durationInDays) {
+        if (durationInDays !== undefined) { 
             if (
                 durationInDays !== null &&
                 (typeof durationInDays !== "number" || durationInDays < 1)
