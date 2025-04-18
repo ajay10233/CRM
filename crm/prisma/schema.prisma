@@ -31,6 +31,7 @@ model Plan {
   updatedAt      DateTime @updatedAt
   users          User[]   @relation("PlanUsers")
   image          String?
+  maxUploadSizeMB Int      @default(1)
 }
 
 model User {
@@ -106,8 +107,32 @@ model User {
   planExpiresAt        DateTime?
   paidProfilesGiven    PaidProfile[] @relation("PaidProfilePayer")
   abusiveCommentsReported AbusiveComment[] @relation("UserReportedAbuse")
+  favoriteBills FavoriteBills[]
 
+  pastAddresses PastAddress[]
+  
   @@map("users")
+}
+
+model PastAddress {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.ObjectId
+
+  houseNumber   String?
+  street        String?
+  buildingName  String?
+  landmark      String?
+  city          String?
+  state         String?
+  country       String?
+  zipCode       String?
+  latitude      Float?
+  longitude     Float?
+
+  movedOutAt    DateTime  // When the institution moved from this address
+
+  createdAt     DateTime  @default(now())
 }
 
 //! Need to add cron jobs to automatically downgrade the plans
@@ -274,6 +299,7 @@ model Bill {
   id             String     @id @default(auto()) @map("_id") @db.ObjectId
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
+  expiresAt      DateTime
 
   userId         String?    @db.ObjectId
   institutionId  String?    @db.ObjectId
@@ -293,9 +319,11 @@ model Bill {
 
   fileUrl        String?
   fileType       String?
-
+  
   items         BillItem[] @relation("BillToBillItem")
   shortBill  ShortBill?
+  favoritedByUsers FavoriteBills[]
+
   @@map("bills")
 }
 
@@ -373,7 +401,7 @@ model PaidProfile {
   notes           String?
   user            User     @relation("PaidProfilePayer", fields: [userId], references: [id])
   image           String?
-
+  range           Int?
 
   @@map("paid_profiles")
 }
@@ -392,6 +420,21 @@ model AbusiveComment {
 
   @@map("abusive_comments")
 }
+
+model FavoriteBills {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  userId  String @db.ObjectId
+  billId  String @db.ObjectId
+
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bill    Bill   @relation(fields: [billId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, billId]) // A user can't favorite the same bill twice
+  @@map("favorite_bills")
+}
+
 
 model AdminImages{
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
