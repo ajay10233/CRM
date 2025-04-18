@@ -3,7 +3,11 @@ import { prisma } from "@/lib/db";
 import cloudinary from "@/utils/cloudinary";
 
 export async function GET() {
-  const plans = await prisma.plan.findMany();
+  const plans = await prisma.plan.findMany({
+    orderBy: {
+      price: 'asc',
+    },
+  });
   return NextResponse.json(plans,{ status: 200 });
 }
 
