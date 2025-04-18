@@ -392,3 +392,10 @@ model AbusiveComment {
 
   @@map("abusive_comments")
 }
+
+model AdminImages{
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  link       String?
+  details    String?
+  createdAt  DateTime @default(now())
+}

@@ -1,3 +1,88 @@
+# 📤 Upload Admin Image API
+
+## **Endpoint**
+```
+POST /api/admin/image-upload
+```
+
+## **Description**
+This endpoint uploads a base64 image to Cloudinary, saves its URL along with additional details in the database.
+
+---
+
+## 🔐 **Authorization**
+No authentication required (modify based on your app’s auth rules).
+
+---
+
+## 📥 Request Payload
+
+### **Headers**
+```http
+Content-Type: application/json
+```
+
+### **Body**
+```json
+{
+  "base64Image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...",
+  "details": "Admin profile image" // Optional textual detail
+}
+```
+
+| Field        | Type   | Required | Description                    |
+|--------------|--------|----------|--------------------------------|
+| `base64Image`| string | ✅       | The image encoded in base64    |
+| `details`    | string | ❌       | Any additional image context   |
+
+---
+
+## 📤 Response
+
+### ✅ **Success (200 OK)**
+
+```json
+{
+  "id": "cluiwm1o60000v0f6xxtjhzqt",
+  "link": "https://res.cloudinary.com/demo/image/upload/v1713387292/admin_images/uuid.png",
+  "details": "Admin profile image",
+  "createdAt": "2025-04-18T09:45:00.123Z"
+}
+```
+
+| Field     | Type   | Description                        |
+|-----------|--------|------------------------------------|
+| `id`      | string | Unique image ID in the database    |
+| `link`    | string | Cloudinary image URL               |
+| `details` | string | Context provided during upload     |
+| `createdAt` | string | Timestamp of when image was stored |
+
+---
+
+### ❌ **Error (400 Bad Request)**
+```json
+{
+  "error": "No image provided"
+}
+```
+
+### ❌ **Error (500 Internal Server Error)**
+```json
+{
+  "error": "Internal server error"
+}
+```
+
+---
+
+## 📌 Notes
+
+- Ensure `base64Image` is a valid base64-encoded image string with proper data URI format.
+- Images are stored in the Cloudinary folder: `admin_images/`.
+- A UUID is used as the public ID in Cloudinary for uniqueness.
+- Image metadata is saved in a Prisma model `adminImages`.
+
+
 ## 📄 API: `/api/coupons`
 
 ---
