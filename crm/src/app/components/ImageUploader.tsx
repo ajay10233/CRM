@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 
 export default function ImageUploader() {
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -63,7 +64,16 @@ export default function ImageUploader() {
       <h2 className="text-xl font-semibold">Upload Admin Image</h2>
 
       <input type="file" accept="image/*" onChange={handleFileChange} />
-      {preview && <img src={preview} alt="Preview" className="h-40 object-contain border" />}
+      {preview && (
+        <div className="relative h-40 w-full border">
+          <Image
+            src={preview}
+            alt="Preview"
+            fill
+            className="object-contain"
+          />
+        </div>
+      )}
 
       <textarea
         placeholder="Details (optional)"
