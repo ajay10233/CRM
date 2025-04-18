@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { motion } from "framer-motion";  // ← Framer Motion import
+import { motion } from "framer-motion"; // ← Framer Motion import
 
 type Plan = {
   id?: string;
@@ -23,7 +23,13 @@ export default function PlansPage() {
   const fetchPlans = async () => {
     try {
       const res = await axios.get("/api/plans");
-      setPlans(res.data);
+      setPlans(
+        res.data.map((plan: any) => ({
+          ...plan,
+          price: plan.price || 0, // Default to 0 if price is missing
+          durationInDays: plan.durationInDays || 0, // Default to 0 if missing
+        }))
+      );
     } catch (err) {
       console.error("Error fetching plans", err);
     } finally {
@@ -42,7 +48,10 @@ export default function PlansPage() {
 
   const handleChange = (field: keyof Plan, value: any) => {
     if (!editedPlan) return;
-    setEditedPlan({ ...editedPlan, [field]: value });
+    // Ensure the value is not NaN and defaults to 0 if not set
+    const newValue =
+      value !== "" && value !== null && value !== undefined ? value : 0;
+    setEditedPlan({ ...editedPlan, [field]: newValue });
   };
 
   const handleFeatureChange = (index: number, value: string) => {
@@ -65,7 +74,9 @@ export default function PlansPage() {
 
   return (
     <div className="min-h-screen bg-[#222629] p-8">
-      <h1 className="text-4xl font-bold text-center mb-10 text-white">Plans Portal</h1>
+      <h1 className="text-4xl font-bold text-center mb-10 text-white">
+        Plans Portal
+      </h1>
 
       {/* Loader */}
       {loading ? (
@@ -73,7 +84,7 @@ export default function PlansPage() {
           <div className="w-16 h-16 border-4 border-t-[#4FD1C5] border-b-[#F6AD55] border-l-transparent border-r-transparent rounded-full animate-spin"></div>
         </div>
       ) : (
-        <motion.div 
+        <motion.div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -97,27 +108,35 @@ export default function PlansPage() {
                   <input
                     type="number"
                     className="w-full bg-[#2F3E4C] text-white border border-[#4FD1C5] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#4FD1C5]"
-                    value={editedPlan?.price}
-                    onChange={(e) => handleChange("price", Number(e.target.value))}
+                    value={editedPlan?.price || 0}
+                    onChange={(e) =>
+                      handleChange("price", Number(e.target.value))
+                    }
                   />
                   <textarea
                     className="w-full bg-[#2F3E4C] text-white border border-[#4FD1C5] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#4FD1C5]"
                     value={editedPlan?.description}
-                    onChange={(e) => handleChange("description", e.target.value)}
+                    onChange={(e) =>
+                      handleChange("description", e.target.value)
+                    }
                   />
                   <input
                     type="number"
                     className="w-full bg-[#2F3E4C] text-white border border-[#4FD1C5] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#4FD1C5]"
                     placeholder="Duration in days"
                     value={editedPlan?.durationInDays || ""}
-                    onChange={(e) => handleChange("durationInDays", Number(e.target.value))}
+                    onChange={(e) =>
+                      handleChange("durationInDays", Number(e.target.value))
+                    }
                   />
                   {editedPlan?.features.map((feature, fIndex) => (
                     <input
                       key={fIndex}
                       className="w-full bg-[#2F3E4C] text-white border border-[#4FD1C5] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#4FD1C5]"
                       value={feature}
-                      onChange={(e) => handleFeatureChange(fIndex, e.target.value)}
+                      onChange={(e) =>
+                        handleFeatureChange(fIndex, e.target.value)
+                      }
                     />
                   ))}
                   <button
@@ -131,9 +150,13 @@ export default function PlansPage() {
                 <div className="space-y-3">
                   <h2 className="text-2xl font-bold text-white">{plan.name}</h2>
                   <p className="text-gray-300 text-sm">{plan.description}</p>
-                  <p className="text-2xl font-bold text-[#F6AD55]">₹ {plan.price}</p>
+                  <p className="text-2xl font-bold text-[#F6AD55]">
+                    ₹ {plan.price}
+                  </p>
                   <p className="text-sm text-gray-400">
-                    {plan.durationInDays ? `${plan.durationInDays} days` : "No duration"}
+                    {plan.durationInDays
+                      ? `${plan.durationInDays} days`
+                      : "No duration"}
                   </p>
                   <ul className="list-disc pl-5 text-sm text-gray-300">
                     {plan.features.map((feature, i) => (
