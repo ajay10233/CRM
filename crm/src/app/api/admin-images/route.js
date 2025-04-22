@@ -1,4 +1,4 @@
-import {  NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import cloudinary from '@/utils/cloudinary';
 import { v4 as uuidv4 } from 'uuid';
@@ -7,27 +7,35 @@ export async function GET() {
   const images = await prisma.adminImages.findMany({
     orderBy: { createdAt: 'desc' },
   });
-  return NextResponse.json(images,  { status: 200 });
+  return NextResponse.json(images, { status: 200 });
 }
 
 export async function POST(req) {
   try {
-    const body = await req.json();
-    const { base64Image, details } = body;
+    const formData = await req.formData();
+    const file = formData.get("file");
+    const details = formData.get("details");
 
-    if (!base64Image) {
-      return NextResponse.json({ error: 'No image provided' }, { status: 400 });
+    if (!file) {
+      return NextResponse.json({ error: 'No image file provided' }, { status: 400 });
     }
 
-    const uploadRes = await cloudinary.uploader.upload(base64Image, {
-      folder: 'admin_images',
-      public_id: uuidv4(),
-    });
+    const buffer = await file.arrayBuffer();
+    const base64Image = Buffer.from(buffer).toString('base64');
+    const fileType = file.type.split('/')[1]; // jpg, png etc.
+
+    const uploadRes = await cloudinary.uploader.upload(
+      `data:${file.type};base64,${base64Image}`,
+      {
+        folder: 'admin_images',
+        public_id: uuidv4(),
+      }
+    );
 
     const image = await prisma.adminImages.create({
       data: {
         link: uploadRes.secure_url,
-        details,
+        details: details || "",
       },
     });
 
