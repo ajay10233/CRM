@@ -1,3 +1,79 @@
+# Create Coupon API
+
+## Endpoint
+```http
+POST /api/coupon
+```
+
+## Description
+Creates a new coupon with the given details like name, discount percentage, start date, purpose, duration, and optional usage limit.
+
+---
+
+## Request Payload
+
+| Field               | Type    | Required | Description |
+|---------------------|---------|----------|-------------|
+| `name`              | string  | Yes      | The name of the coupon. |
+| `discountPercentage`| number  | Yes      | Discount percentage (must be between 0 and 100). |
+| `startDate`         | string (ISO Date) | No  | Start date for the coupon. If not provided, random future date is assigned. |
+| `purpose`           | string  | Yes      | Purpose or description of the coupon. |
+| `durationInDays`    | number  | Yes      | Number of days the coupon is valid for (must be > 0). |
+| `limit`             | number  | No       | Maximum number of times the coupon can be used. Default: `-1` (unlimited). |
+
+### Example Request Body
+```json
+{
+  "name": "SUMMER50",
+  "discountPercentage": 50,
+  "startDate": "2025-05-01T00:00:00.000Z",
+  "purpose": "Summer Sale",
+  "durationInDays": 10,
+  "limit": 100
+}
+```
+
+---
+
+## Success Response
+
+- **Code:** `200 OK`
+- **Content:**
+```json
+{
+  "id": "coupon_id_generated_by_db",
+  "name": "SUMMER50",
+  "discountPercentage": 50,
+  "startDate": "2025-05-01T00:00:00.000Z",
+  "durationInDays": 10,
+  "expiresAt": "2025-05-11T00:00:00.000Z",
+  "purpose": "Summer Sale",
+  "limit": 100,
+  "createdAt": "2025-04-26T10:00:00.000Z",
+  "updatedAt": "2025-04-26T10:00:00.000Z"
+}
+```
+
+> Note: `createdAt` and `updatedAt` are automatically handled by the database.
+
+---
+
+## Error Responses
+
+| Status Code | Message |
+|-------------|---------|
+| 400         | `{ "error": "Missing fields" }` - If required fields are missing. |
+| 400         | `{ "error": "durationInDays must be a positive number" }` - If `durationInDays` is 0 or negative. |
+| 400         | `{ "error": "discountPercentage must be a positive number between 0 and 100" }` - If `discountPercentage` is invalid. |
+
+
+
+
+
+
+
+
+
 # 📤 Upload Admin Image API
 
 ## **Endpoint**
